@@ -114,12 +114,17 @@ if __name__ == "__main__":
         help="displays which patterns were replaced in the text"
     )
     args = parser.parse_args()
+
     if args.verbose:
         print("gate_file_path == {}".format(repr(args.gate_file_path)))
         print("evita_file_path == {}".format(repr(args.evita_file_path)))
 
     gate_file = gatenlp.AnnotationFile(args.gate_file_path)
     evita_file = EvitaFile(args.evita_file_path)
+
+    old_evita_set = gate_file.annotation_sets_dict["Evita"]
+    if old_evita_set:
+        old_evita_set.delete()
 
     if gate_file.text == evita_file.text:
         is_text_same = True
@@ -133,6 +138,7 @@ if __name__ == "__main__":
 
     if args.verbose:
         print("is_text_same == {}".format(is_text_same))
+
 
     gate_evita_set = gate_file.create_annotation_set("Evita")
 
@@ -150,8 +156,7 @@ if __name__ == "__main__":
         gatenlp.diff.align_annotations_2(new_annotations, changes)
         gatenlp.diff.assure_nodes(new_annotations, gate_file)
 
-    # gate_file.save_changes()
-    print("gate_file.save_changes()")
+    gate_file.save_changes()
 
     if args.verbose:
         print()
