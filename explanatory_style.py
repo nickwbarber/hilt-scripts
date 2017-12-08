@@ -1,11 +1,15 @@
+#!/usr/bin/env python3
+
 import gatenlp
 
+
+# TODO: update to current Annotation class definition
 class Event(gatenlp.Annotation):
     def __init__(self,
                  annotation):
         super().__init__(
-            annotation._annotation_element,
-            annotation._annotation_file,
+            annotation._element,
+            annotation._annotation_set,
         )
         self._polarity = None
 
@@ -29,8 +33,8 @@ class Attribution(gatenlp.Annotation):
     def __init__(self,
                  annotation):
         super().__init__(
-            annotation._annotation_element,
-            annotation._annotation_file,
+            annotation._element,
+            annotation._annotation_set,
         )
         self._dimensions = None
 
