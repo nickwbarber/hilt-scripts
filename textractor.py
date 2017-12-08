@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 from os.path import *
 from collections import namedtuple
 import re
@@ -76,6 +78,11 @@ regexes = (
         replacement="",
     ),
     Regex(
+        name="trailing_spaces",
+        expression=re.compile("\s+?$", re.MULTILINE),
+        replacement="",
+    ),
+    Regex(
         name="extra_spaces",
         expression=re.compile("\s\s+?"),
         replacement=" ",
@@ -100,13 +107,14 @@ regexes = (
 def clean(text,
           verbose=False):
     matches = set()
+    cleaned_text = text
     for regex in regexes:
-        text = regex.expression.sub(regex.replacement, text)
+        cleaned_text = regex.expression.sub(regex.replacement, cleaned_text)
         if verbose:
             matches.add(regex.name)
     if verbose:
         print(matches)
-    return text
+    return cleaned_text
 
 
 if __name__ == "__main__":
