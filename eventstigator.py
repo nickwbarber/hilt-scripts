@@ -122,8 +122,8 @@ if __name__ == "__main__":
     gate_file = gatenlp.AnnotationFile(args.gate_file_path)
     evita_file = EvitaFile(args.evita_file_path)
 
-    old_evita_set = gate_file.annotation_sets_dict["Evita"]
-    if old_evita_set:
+    if "Evita" in gate_file.annotation_set_names:
+        old_evita_set = gate_file.annotation_sets_dict["Evita"]
         old_evita_set.delete()
 
     if gate_file.text == evita_file.text:
