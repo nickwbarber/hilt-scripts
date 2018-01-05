@@ -1,120 +1,11 @@
 #!/usr/bin/env python3
 
-from os.path import *
-from collections import namedtuple
-import re
+from os.path import abspath
+from os.path import splitext
+from os.path import isfile
 import argparse
 import gatenlp
-
-
-Regex = namedtuple(
-    "Regex",
-    [
-        "name",
-        "expression",
-        "replacement",
-    ]
-)
-
-regexes = (
-    Regex(
-        name="file_names",
-        expression=re.compile(".*\.\w\w+.*?"),
-        replacement="",
-    ),
-    Regex(
-        name="speaker_tag",
-        expression=re.compile("^.*?:", re.MULTILINE),
-        replacement="",
-    ),
-    Regex(
-        name="extralinguistic_tags",
-        expression=re.compile("{.+?}"),
-        replacement="",
-    ),
-    Regex(
-        name="round_braces",
-        expression=re.compile("[\(\)]"),
-        replacement="",
-    ),
-    Regex(
-        name="square_braces",
-        expression=re.compile("[\[\]]"),
-        replacement="",
-    ),
-    Regex(
-        name="curly_braces",
-        expression=re.compile("[{}]"),
-        replacement="",
-    ),
-    Regex(
-        name="tilde",
-        expression=re.compile("~"),
-        replacement="",
-    ),
-    Regex(
-        name="backslash",
-        expression=re.compile(r"\\"),
-        replacement="",
-    ),
-    Regex(
-        name="forward_slash",
-        expression=re.compile("/"),
-        replacement="",
-    ),
-    Regex(
-        name="asterisk",
-        expression=re.compile("\*"),
-        replacement="",
-    ),
-    Regex(
-        name="misc_characters",
-        expression=re.compile("[\$\^\+@#`_=]|<>;"),
-        replacement="",
-    ),
-    Regex(
-        name="leading_spaces",
-        expression=re.compile("^\s+?", re.MULTILINE),
-        replacement="",
-    ),
-    Regex(
-        name="trailing_spaces",
-        expression=re.compile("\s+?$", re.MULTILINE),
-        replacement="",
-    ),
-    Regex(
-        name="extra_spaces",
-        expression=re.compile("\s\s+?"),
-        replacement=" ",
-    ),
-    Regex(
-        name="crlf_newlines",
-        expression=re.compile(r"\r\n"),
-        replacement="\n",
-    ),
-    Regex(
-        name="cr_newlines",
-        expression=re.compile(r"\r"),
-        replacement="\n",
-    ),
-    Regex(
-        name="extra_newlines",
-        expression=re.compile(r"\n\n+?"),
-        replacement="\n",
-    ),
-)
-
-def clean(text,
-          verbose=False):
-    matches = set()
-    cleaned_text = text
-    for regex in regexes:
-        cleaned_text = regex.expression.sub(regex.replacement, cleaned_text)
-        if verbose:
-            matches.add(regex.name)
-    if verbose:
-        print(matches)
-    return cleaned_text
+import Levenshtein
 
 
 if __name__ == "__main__":
@@ -153,13 +44,81 @@ if __name__ == "__main__":
         default=False,
         help="displays which patterns were replaced in the text"
     )
+    parser.add_argument(
+        "-r",
+        "--regexes",
+        nargs="*",
+        dest="regex_restrictions",
+        required=False,
+        help="specific regex patterns desired. If not specified, all will be"
+        " run")
     args = parser.parse_args()
 
+    regexes = gatenlp.regex_patterns.regexes
+
     annotation_file = gatenlp.AnnotationFile(args.input_file)
+    if args.regex_restrictions:
+        regex_restrictions = [
+            regex.name
+            for regex in regexes
+            if regex.name in args.regex_restrictions
+        ]
+        if len(args.regex_restrictions) != len(regex_restrictions):
+            for desired_regex in args.regex_restrictions:
+                if desired_regex not in [ regex.name for regex in regexes ]:
+                    not_recognized_string = "'{}' is not a recognized regex pattern.".format(
+                        desired_regex
+                    )
+                    match_ratios = {
+                        regex.name : Levenshtein.ratio(
+                            regex.name,
+                            desired_regex
+                        )
+                        for regex in regexes
+                    }
+                    highest_ratio = max(match_ratios.values())
+                    if highest_ratio <= 0.5:
+                        raise Exception(not_recognized_string)
+                    elif highest_ratio >= 0.85:
+                        target_ratio = highest_ratio
+                    else:
+                        target_ratio = 0.5
+                    close_matches = [
+                        regex_name
+                        for regex_name, ratio in match_ratios.items()
+                        if ratio >= target_ratio
+                    ]
+                    if len(close_matches) == 1:
+                        suggestion_string = "Did you mean '{}'?".format(
+                            close_matches[0],
+                        )
+                    elif len(close_matches) == 2:
+                        suggestion_string = "Did you mean '{}' or '{}'?".format(
+                            close_matches[0],
+                            close_matches[1],
+                        )
+                    else:
+                        suggestion_string = "Did you mean one of these?: {}".format(
+                            ", ".join(close_matches)
+                        )
+                    if suggestion_string:
+                        error_string = "{} {}".format(
+                            not_recognized_string,
+                            suggestion_string,
+                        )
+                    else:
+                        error_string = not_recognized_string
+                    raise Exception(error_string)
+            quit()
+
+
+    else:
+        regex_restrictions = False
 
     if args.clean:
-        text = clean(
+        text = gatenlp.normalize(
             annotation_file.text,
+            regex_restrictions=regex_restrictions,
             verbose=args.verbose,
         )
     else:

@@ -122,15 +122,11 @@ if __name__ == "__main__":
     gate_file = gatenlp.AnnotationFile(args.gate_file_path)
     evita_file = EvitaFile(args.evita_file_path)
 
-    if "Evita" in gate_file.annotation_set_names:
-        old_evita_set = gate_file.annotation_sets_dict["Evita"]
-        old_evita_set.delete()
-
     if gate_file.text == evita_file.text:
         is_text_same = True
     else:
         is_text_same = False
-        changes = gatenlp.diff.get_change_list_2(
+        changes = gatenlp.diff.get_change_tree(
             evita_file.text,
             gate_file.text,
         )
@@ -140,7 +136,7 @@ if __name__ == "__main__":
         print("is_text_same == {}".format(is_text_same))
 
 
-    gate_evita_set = gate_file.create_annotation_set("Evita")
+    gate_evita_set = gate_file.create_annotation_set("EAU_heuristics")
 
     for event in evita_file.events:
         new_annotation = gate_evita_set.create_annotation(
@@ -153,7 +149,7 @@ if __name__ == "__main__":
             new_annotations.append(new_annotation)
 
     if not is_text_same:
-        gatenlp.diff.align_annotations_2(new_annotations, changes)
+        gatenlp.diff.align_annotations(new_annotations, changes)
         gatenlp.diff.assure_nodes(new_annotations, gate_file)
 
     gate_file.save_changes()

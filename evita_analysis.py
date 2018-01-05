@@ -26,7 +26,10 @@ for conversations_dir in conversations_dirs:
 
         gate_file = gatenlp.AnnotationFile(gate_file_path)
 
-        evita_set = gate_file.annotation_sets_dict["Evita"]
+        try:
+            evita_set = gate_file.annotation_sets_dict["Evita"]
+        except KeyError:
+            continue
         consensus_event_set = gate_file.annotation_sets_dict["consensus_events"]
 
         local_num_human_events = 0
