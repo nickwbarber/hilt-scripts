@@ -52,6 +52,8 @@ if __name__ == "__main__":
         ]
         consensus_attributions_set = annotation_file.annotation_sets_dict["consensus_attributions"]
         consensus_events_set = annotation_file.annotation_sets_dict["consensus_events"]
+        assert len(consensus_events_set) > 0
+        assert len(consensus_attributions_set) > 0
 
         sentences = [
             annotation
