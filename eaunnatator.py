@@ -16,9 +16,9 @@ def get_eau_heuristics(annotations):
     ]
 
 def get_near_sentences(sentence,
-                              distance=1,
-                              before=True,
-                              after=True):
+                       distance=1,
+                       before=True,
+                       after=True):
     if not (before or after):
         return
 
@@ -64,7 +64,7 @@ if __name__ == "__main__":
 
 
     parser = argparse.ArgumentParser(
-        description="Adds speaker tags to sentences within a HiLT GATE annotation"
+        description="Adds more abstract annotations to a PES pre-annotated GATE"
         " file"
     )
     parser.add_argument(
