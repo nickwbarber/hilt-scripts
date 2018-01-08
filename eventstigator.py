@@ -140,7 +140,7 @@ if __name__ == "__main__":
 
     for event in evita_file.events:
         new_annotation = gate_evita_set.create_annotation(
-            annotation_type=event.type,
+            annotation_type="evita_event",
             start=event.start,
             end=event.end,
             feature_dict=event.attrib,
