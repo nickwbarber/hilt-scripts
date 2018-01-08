@@ -15,8 +15,7 @@ def is_eau_relevant(type_list):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Adds more abstract annotations to a PES pre-annotated GATE"
-        " file"
+        description="Calculates effectiveness of EAU heuristics in terms of an F1 score"
     )
     parser.add_argument(
         "-i",
