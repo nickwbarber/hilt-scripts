@@ -105,21 +105,21 @@ if __name__ == "__main__":
 
     results = [
         (
-            "Precision",
+            "precision",
             fm.calc_precision(
                 num_true_positives=num_true_positives,
-                num_false_positives=num_true_positives,
+                num_false_positives=num_false_positives,
             ),
         ),
         (
-            "Recall",
+            "recall",
             fm.calc_recall(
                 num_true_positives=num_true_positives,
                 num_false_negatives=num_false_negatives,
             ),
         ),
         (
-            "F-measure",
+            "f-measure",
             fm.calc_f_measure(
                 num_true_positives=num_true_positives,
                 num_false_positives=num_false_positives,
