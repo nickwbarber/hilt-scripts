@@ -37,6 +37,10 @@ if __name__ == "__main__":
     num_true_positives = 0
     num_false_positives = 0
     num_false_negatives = 0
+    total_text_length = 0
+    total_heuristic_length = 0
+    total_heuristics = 0
+    total_eaus = 0
 
     for annotation_file_path in args.annotation_files:
         if not os.path.isfile(annotation_file_path):
@@ -48,6 +52,7 @@ if __name__ == "__main__":
             continue
 
         annotation_file = gatenlp.AnnotationFile(annotation_file_path)
+        total_text_length += len(annotation_file.text)
 
         eau_heuristic_annotations = [
             annotation
@@ -58,6 +63,7 @@ if __name__ == "__main__":
         consensus_events_set = annotation_file.annotation_sets_dict["consensus_events"]
         assert len(consensus_events_set) > 0
         assert len(consensus_attributions_set) > 0
+        total_eaus += len(consensus_attributions_set)
 
         sentences = [
             annotation
@@ -93,10 +99,47 @@ if __name__ == "__main__":
             if not heuristic_present and eau_relevant:
                 num_false_negatives += 1
 
-    f_measure = fm.calc_f_measure(
-        num_true_positives=num_true_positives,
-        num_false_positives=num_false_positives,
-        num_false_negatives=num_false_negatives,
-    )
+            if heuristic_present:
+                total_heuristic_length += len(str(turn))
+                total_heuristics += 1
 
-    print(f_measure)
+    results = [
+        (
+            "Precision",
+            fm.calc_precision(
+                num_true_positives=num_true_positives,
+                num_false_positives=num_true_positives,
+            ),
+        ),
+        (
+            "Recall",
+            fm.calc_recall(
+                num_true_positives=num_true_positives,
+                num_false_negatives=num_false_negatives,
+            ),
+        ),
+        (
+            "F-measure",
+            fm.calc_f_measure(
+                num_true_positives=num_true_positives,
+                num_false_positives=num_false_positives,
+                num_false_negatives=num_false_negatives,
+            ),
+        ),
+        (
+            "percentage_of_text",
+            (total_heuristic_length / total_text_length),
+        ),
+    ]
+    longest_label=max(
+        len(label)
+        for label,_ in results
+    )
+    for label, value in results:
+        print(
+            "{label:.<{longest_label}} = {value}".format(
+                label=label,
+                value=value,
+                longest_label=longest_label,
+            )
+        )
