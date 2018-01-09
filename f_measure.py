@@ -53,8 +53,8 @@ def calc_precision(num_true_positives,
                    num_false_positives):
     try:
         return (
-            ( num_true_positives ) /
-            ( num_true_positives + num_false_positives )
+            ( num_true_positives )
+            / ( num_true_positives + num_false_positives )
         )
     except ZeroDivisionError:
         # Since dividing by zero only happens when both annot-
@@ -66,8 +66,8 @@ def calc_recall(num_true_positives,
                 num_false_negatives):
     try:
         return (
-            ( num_true_positives ) /
-            ( num_true_positives + num_false_negatives )
+            ( num_true_positives )
+            / ( num_true_positives + num_false_negatives )
         )
     except ZeroDivisionError:
         # Since dividing by zero only happens when both annot-
@@ -76,20 +76,27 @@ def calc_recall(num_true_positives,
         return 1
 
 def calc_harmonic_mean( x, y ):
-    return 2 * ( ( x * y ) / ( x + y ) )
+    return (
+        2 * (
+            ( x * y )
+            / ( x + y )
+        )
+    )
 
 def calc_f_measure(num_true_positives,
                    num_false_positives,
                    num_false_negatives):
 
     precision = calc_precision(
-        num_true_positives,
-        num_false_positives
+        num_true_positives=num_true_positives,
+        num_false_positives=num_false_positives,
     )
     recall = calc_recall(
-        num_true_positives,
-        num_false_negatives
+        num_true_positives=num_true_positives,
+        num_false_negatives=num_false_negatives,
     )
+    print(precision)
+    print(recall)
 
     try:
         return calc_harmonic_mean( precision, recall )
