@@ -94,6 +94,10 @@ if __name__ == "__main__":
             continue
         annotation_file = gatenlp.AnnotationFile(annotation_file_path)
 
+        for annotation in annotation_file.annotations:
+            if annotation.type == args.label:
+                annotation.delete()
+
         eau_heuristic_annotation_set = annotation_file.annotation_sets_dict["EAU_heuristics"]
         sentences = [
             annotation
@@ -105,8 +109,6 @@ if __name__ == "__main__":
         for annotation in eau_heuristic_annotation_set:
             if annotation.type in eau_heuristic_types:
                 eau_heuristic_tree.add(annotation)
-            elif annotation.type == args.label:
-                annotation.delete()
         for sentence in sentences:
             eau_heuristic_tree.add(sentence)
 
