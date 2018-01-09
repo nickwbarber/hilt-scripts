@@ -34,6 +34,10 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
+    num_true_positives = 0
+    num_false_positives = 0
+    num_false_negatives = 0
+
     for annotation_file_path in args.annotation_files:
         if not os.path.isfile(annotation_file_path):
             print(
@@ -64,10 +68,6 @@ if __name__ == "__main__":
 
         turns = hiltnlp.get_turns(sentences)
 
-        num_true_positives = 0
-        num_false_positives = 0
-        num_false_negatives = 0
-
         tree = gatenlp.GateIntervalTree()
         for annotation in itertools.chain(
             eau_heuristic_annotations,
@@ -93,10 +93,10 @@ if __name__ == "__main__":
             if not heuristic_present and eau_relevant:
                 num_false_negatives += 1
 
-        f_measure = fm.calc_f_measure(
-            num_true_positives=num_true_positives,
-            num_false_positives=num_false_positives,
-            num_false_negatives=num_false_negatives,
-        )
+    f_measure = fm.calc_f_measure(
+        num_true_positives=num_true_positives,
+        num_false_positives=num_false_positives,
+        num_false_negatives=num_false_negatives,
+    )
 
-        print(f_measure)
+    print(f_measure)
