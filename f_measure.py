@@ -95,8 +95,6 @@ def calc_f_measure(num_true_positives,
         num_true_positives=num_true_positives,
         num_false_negatives=num_false_negatives,
     )
-    print(precision)
-    print(recall)
 
     try:
         return calc_harmonic_mean( precision, recall )
