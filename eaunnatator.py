@@ -2,7 +2,7 @@
 
 
 eau_heuristic_types = [
-    "EVENT",
+    "evita_event",
     "nonneutral_sentence",
     "participant_reference",
     "possible_causal_connective",
@@ -75,6 +75,13 @@ if __name__ == "__main__":
         required="true",
         help="GATE annotation files"
     )
+    parser.add_argument(
+        "-l",
+        "--label",
+        dest="label",
+        required="true",
+        help="GATE annotation files"
+    )
     args = parser.parse_args()
 
     for annotation_file_path in args.annotation_files:
@@ -96,7 +103,10 @@ if __name__ == "__main__":
         gatenlp.dlink(sentences)
         eau_heuristic_tree = gatenlp.GateIntervalTree()
         for annotation in eau_heuristic_annotation_set:
-            eau_heuristic_tree.add(annotation)
+            if annotation.type in eau_heuristic_types:
+                eau_heuristic_tree.add(annotation)
+            elif annotation.type == args.label:
+                annotation.delete()
         for sentence in sentences:
             eau_heuristic_tree.add(sentence)
 
@@ -114,7 +124,7 @@ if __name__ == "__main__":
                 intersecting_heuristic_type_set = set(intersecting_heuristic_types)
                 if len(intersecting_heuristic_type_set) == len(eau_heuristic_types):
                     eau_heuristic_annotation_set.create_annotation(
-                        "probable_eau_sentence",
+                        args.label,
                         sentence.start_node,
                         sentence.end_node,
                     )
@@ -134,7 +144,7 @@ if __name__ == "__main__":
                         ]
                         if "possible_causal_connective" in intersecting_heuristic_types:
                             eau_heuristic_annotation_set.create_annotation(
-                                "probable_eau_sentence",
+                                args.label,
                                 sentence.start_node,
                                 sentence.end_node,
                             )
