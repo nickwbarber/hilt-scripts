@@ -156,34 +156,45 @@ if __name__ == "__main__":
                 )
                 total_heuristics += 1
 
+    precision = fm.calc_precision(
+        num_true_positives=num_true_positives,
+        num_false_positives=num_false_positives,
+    )
+    recall = fm.calc_recall(
+        num_true_positives=num_true_positives,
+        num_false_negatives=num_false_negatives,
+    )
+    f_measure = fm.calc_f_measure(
+        num_true_positives=num_true_positives,
+        num_false_positives=num_false_positives,
+        num_false_negatives=num_false_negatives,
+    )
+    percentage_of_text = (total_heuristic_length / total_text_length)
+    projected_annotation_speed = ( recall / percentage_of_text )
+
     results = [
         (
             "precision",
-            fm.calc_precision(
-                num_true_positives=num_true_positives,
-                num_false_positives=num_false_positives,
-            ),
+            precision,
         ),
         (
             "recall",
-            fm.calc_recall(
-                num_true_positives=num_true_positives,
-                num_false_negatives=num_false_negatives,
-            ),
+            recall,
         ),
         (
             "f-measure",
-            fm.calc_f_measure(
-                num_true_positives=num_true_positives,
-                num_false_positives=num_false_positives,
-                num_false_negatives=num_false_negatives,
-            ),
+            f_measure,
         ),
         (
             "percentage_of_text",
-            (total_heuristic_length / total_text_length),
+            percentage_of_text,
         ),
+        (
+            "projected_annotation_speed",
+            projected_annotation_speed,
+        )
     ]
+
     longest_label=max(
         len(label)
         for label,_ in results
@@ -192,7 +203,7 @@ if __name__ == "__main__":
         print(
             "{label:.<{longest_label}} = {value}".format(
                 label=label,
-                value=value,
+                value=round(value,2),
                 longest_label=longest_label,
             )
         )
