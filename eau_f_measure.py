@@ -8,6 +8,47 @@ import hiltnlp
 import f_measure as fm
 
 
+def get_near_turns(turn,
+                   distance=1,
+                   before=True,
+                   after=True):
+    if not (before or after):
+        return
+
+    desired_distance = distance
+
+    before_turns = []
+    current_distance = 0
+    current_turn = turn
+    while current_distance < desired_distance:
+        previous_turn = current_turn.previous
+        if not previous_turn:
+            break
+        before_turns.append(previous_turn)
+        current_distance += 1
+        current_turn = previous_turn
+
+    after_turns = []
+    current_distance = 0
+    current_turn = turn
+    while current_distance < desired_distance:
+        next_turn = current_turn.next
+        if not next_turn:
+            break
+        after_turns.append(next_turn)
+        current_distance += 1
+        current_turn = next_turn
+
+    near_turns = []
+    if before:
+        for x in before_turns:
+            near_turns.append(x)
+    if after:
+        for x in after_turns:
+            near_turns.append(x)
+
+    return near_turns
+
 def is_eau_relevant(type_list):
     event_present = "Event" in type_list
     attribution_present = "Attribution" in type_list
@@ -83,9 +124,18 @@ if __name__ == "__main__":
             tree.add(annotation)
         
         for turn in turns:
+            # search_turns = [turn] + get_near_turns(turn, distance=1, after=False)
+            search_turns = [turn]
+            search_sentences = list( 
+                itertools.chain.from_iterable(
+                    search_turn.sentences
+                    for search_turn in search_turns
+                )
+            )
             intersecting_annotation_types = set(
                 annotation.type
-                for sentence in turn
+                # for sentence in turn
+                for sentence in search_sentences
                 for annotation in tree.search(sentence)
             )
 
@@ -100,7 +150,10 @@ if __name__ == "__main__":
                 num_false_negatives += 1
 
             if heuristic_present:
-                total_heuristic_length += len(str(turn))
+                total_heuristic_length += sum(
+                    len(str(search_turn))
+                    for search_turn in search_turns
+                )
                 total_heuristics += 1
 
     results = [
