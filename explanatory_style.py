@@ -7,17 +7,14 @@ import gatenlp
 class Event(gatenlp.Annotation):
     def __init__(self,
                  annotation):
-        super().__init__(
-            annotation._element,
-            annotation._annotation_set,
-        )
+        self.annotation = annotation
         self._polarity = None
 
     @property
     def polarity(self):
         if not self._polarity:
             polarity = (
-                self.features["Polarity"]
+                self.annotation.features["Polarity"]
                 .value
                 .lower()
             )
@@ -32,10 +29,7 @@ class Event(gatenlp.Annotation):
 class Attribution(gatenlp.Annotation):
     def __init__(self,
                  annotation):
-        super().__init__(
-            annotation._element,
-            annotation._annotation_set,
-        )
+        self.annotation = annotation
         self._dimensions = None
 
     @property
@@ -48,7 +42,7 @@ class Attribution(gatenlp.Annotation):
             }
             for key in dimensions.keys():
                 dimensions[key] = int(
-                    self.features[key]
+                    self.annotation.features[key]
                     .value
                     .split(" ")[0]
                 )
@@ -61,22 +55,16 @@ class Attribution(gatenlp.Annotation):
         else:
             return self._dimensions
 
-    def _get_caused_event(self, events):
-        return next(
-            ( x for x in events if x.id == self._caused_event_id ),
-            None
-        )
-
 class EventAttributionUnit:
     def __init__(self,
                  event,
                  attribution):
         """event, attribution must be gatenlp.Annotation objects
         """
-        self._event = event
-        self._attribution = attribution
-        for annotation in [self.event, self.attribution]:
-            if not isinstance(annotation, gatenlp.Annotation):
+        self._event = Event(event)
+        self._attribution = Attribution(attribution)
+        for component in [self.event, self.attribution]:
+            if not isinstance(component.annotation, gatenlp.Annotation):
                 raise TypeError("Not a gatenlp.Annotation object!")
 
     @property
@@ -87,6 +75,12 @@ class EventAttributionUnit:
     def attribution(self):
         return self._attribution
 
+def get_caused_event(attribution, events):
+    return next(
+        ( x for x in events if x.id == attribution._caused_event_id ),
+        None
+    )
+
 def get_event_attribution_units(events,
                                 attributions):
     """Given an iterable of Events and one of Attributions, return a list of
@@ -94,7 +88,9 @@ def get_event_attribution_units(events,
     """
     return [
         EventAttributionUnit(
-            attribution._get_caused_event(events),
+            # TODO
+            # attribution._get_caused_event(events),
+            get_caused_event(attribution, events),
             attribution
         )
         for attribution in attributions
@@ -105,12 +101,14 @@ def get_event_attribution_units_from_annotations(annotations):
     EventAttributionUnit objects
     """
     events = [
-        Event(annotation)
+        # Event(annotation)
+        annotation
         for annotation in annotations
         if annotation.type.lower() == "event"
     ]
     attributions = (
-        Attribution(annotation)
+        # Attribution(annotation)
+        annotation
         for annotation in annotations
         if annotation.type.lower() == "attribution"
     )
