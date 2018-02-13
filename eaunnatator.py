@@ -11,64 +11,63 @@ eau_heuristic_types = [
     "possible_causal_connective",
 ]
 
-def has_nonneutral_sentiment(annotation,
-                             annotation_tree):
-    intersecting_sentence = get_intersecting_sentence(
-        annotation,
-        annotation_tree=annotation_tree,
-    )
-    return any(
-        intersecting_annotation.type.lower() == "nonneutral_sentence"
-        for intersecting_annotation in annotation_tree.search(intersecting_sentence)
-    )
+def get_intersecting_sentence(annotation):
+    return annotation.get_intersecting_of_type("Sentence")[0]
 
-def has_possible_causal_connective(annotation,
-                                   annotation_tree):
-    intersecting_sentence = get_intersecting_sentence(
-        annotation,
-        annotation_tree=annotation_tree,
+def has_nonneutral_sentiment(annotation):
+    intersecting_sentence = get_intersecting_sentence(annotation)
+    result = bool(
+        intersecting_sentence.get_intersecting_of_type("nonneutral_sentence")
     )
-    return any(
-        any(
-            intersecting_annotation.type.lower() == "possible_causal_connective"
-            for intersecting_annotation in annotation_tree.search(sentence)
+    return result
+
+def has_possible_causal_connective(annotation):
+    intersecting_sentence = get_intersecting_sentence(annotation)
+    result = any(
+        bool(
+            sentence.get_intersecting_of_type("possible_causal_connective")
         )
-        for sentence in get_near_sentences(intersecting_sentence, distance=3)
+        for sentence in get_near_sentences(intersecting_sentence, distance=3) + [intersecting_sentence]
     )
+    return result
 
-def has_participant_reference(annotation,
-                              annotation_tree):
-    intersecting_sentence = get_intersecting_sentence(
-        annotation,
-        annotation_tree=annotation_tree,
+def has_participant_reference(annotation):
+    intersecting_sentence = get_intersecting_sentence(annotation)
+    result = bool(
+        intersecting_sentence.get_intersecting_of_type("participant_reference")
     )
-    return any(
-        intersecting_annotation.type.lower() == "participant_reference"
-        for intersecting_annotation in annotation_tree.search(intersecting_sentence)
-    )
+    return result
 
 def is_probable_eau(evita_event):
-    intersecting_sentence = evita_event.get_intersecting_of_type(
-        "Sentence"
-    )[0]
-    return bool(
-        has_participant_reference(evita_event, annotation_tree=eau_heuristic_tree)
-        and has_possible_causal_connective(evita_event, annotation_tree=eau_heuristic_tree)
-        and has_nonneutral_sentiment(evita_event, annotation_tree=eau_heuristic_tree)
-    )
+    try:
+        result = bool(
+            has_participant_reference(evita_event)
+            and has_possible_causal_connective(evita_event)
+            and has_nonneutral_sentiment(evita_event)
+        )
+    except:
+        print(evita_event)
+        return False
+    return result
 
 def create_heuristic_annotations(annotation_file,
                                  label):
+    num_new_annotations = 0
+
     eau_heuristic_annotation_set = annotation_file.annotation_sets_dict["EAU_heuristics"]
     for annotation in annotation_file.annotations:
         if annotation.type.lower() == "evita_event":
             evita_event = annotation
             if is_probable_eau(evita_event):
-                eau_heuristic_annotation_set.create_annotation(
+                new_annotation = eau_heuristic_annotation_set.create_annotation(
                     args.label,
                     evita_event.start_node,
                     evita_event.end_node,
                 )
+                num_new_annotations += 1
+
+    return num_new_annotations
+
 
 def get_eau_heuristics(annotations):
     return [
@@ -154,11 +153,21 @@ if __name__ == "__main__":
             )
             continue
         annotation_file = gatenlp.AnnotationFile(annotation_file_path)
+        print("annotating:", annotation_file.filename)
+        num_new_annotations = 0
 
         for annotation in annotation_file.annotations:
             if annotation.type == args.label:
                 annotation.delete()
 
-        create_heuristic_annotations(annotation_file, label=args.label)
+        sentences = [ x for x in annotation_file.annotations if x.type == "Sentence" ]
+        gatenlp.dlink(sentences)
+
+        num_new_annotations += create_heuristic_annotations(annotation_file, label=args.label)
 
         annotation_file.save_changes()
+        print("finished:", annotation_file.filename)
+        print("num_new_annotations:", num_new_annotations)
+        print("-"*20)
+        ###
+        quit()
