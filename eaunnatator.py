@@ -26,7 +26,7 @@ def has_possible_causal_connective(annotation):
         bool(
             sentence.get_intersecting_of_type("possible_causal_connective")
         )
-        for sentence in get_near_sentences(intersecting_sentence, distance=3) + [intersecting_sentence]
+        for sentence in hiltnlp.get_near_sentences(intersecting_sentence, distance=3) + [intersecting_sentence]
     )
 
 def has_participant_reference(annotation):
@@ -72,47 +72,6 @@ def get_eau_heuristics(annotations):
         for annotation in annotations
         if annotation.type in eau_heuristic_types
     ]
-
-def get_near_sentences(sentence,
-                       distance=1,
-                       before=True,
-                       after=True):
-    if not (before or after):
-        return
-
-    desired_distance = distance
-
-    before_sentences = []
-    current_distance = 0
-    current_sentence = sentence
-    while current_distance < desired_distance:
-        previous_sentence = current_sentence.previous
-        if not previous_sentence:
-            break
-        before_sentences.append(previous_sentence)
-        current_distance += 1
-        current_sentence = previous_sentence
-
-    after_sentences = []
-    current_distance = 0
-    current_sentence = sentence
-    while current_distance < desired_distance:
-        next_sentence = current_sentence.next
-        if not next_sentence:
-            break
-        after_sentences.append(next_sentence)
-        current_distance += 1
-        current_sentence = next_sentence
-
-    near_sentences = []
-    if before:
-        for x in before_sentences:
-            near_sentences.append(x)
-    if after:
-        for x in after_sentences:
-            near_sentences.append(x)
-
-    return near_sentences
 
 
 if __name__ == "__main__":
