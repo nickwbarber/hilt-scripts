@@ -26,7 +26,10 @@ def has_possible_causal_connective(annotation):
         bool(
             sentence.get_intersecting_of_type("possible_causal_connective")
         )
-        for sentence in hiltnlp.get_near_sentences(intersecting_sentence, distance=3) + [intersecting_sentence]
+        for sentence in (
+            hiltnlp.get_near_sentences(intersecting_sentence, distance=3)
+            + [intersecting_sentence]
+        )
     )
 
 def has_participant_reference(annotation):
@@ -119,7 +122,10 @@ if __name__ == "__main__":
         sentences = [ x for x in annotation_file.annotations if x.type == "Sentence" ]
         gatenlp.dlink(sentences)
 
-        num_new_annotations += create_heuristic_annotations(annotation_file, label=args.label)
+        num_new_annotations += create_heuristic_annotations(
+            annotation_file,
+            label=args.label,
+        )
 
         annotation_file.save_changes()
         print("finished:", annotation_file.filename)
