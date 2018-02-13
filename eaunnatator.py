@@ -47,7 +47,7 @@ def is_probable_eau(evita_event):
             and has_nonneutral_sentiment(evita_event)
         )
     except:
-        print(evita_event)
+        print("error resolving:", evita_event)
         return False
 
 def create_heuristic_annotations(annotation_file,
@@ -131,5 +131,3 @@ if __name__ == "__main__":
         print("finished:", annotation_file.filename)
         print("num_new_annotations:", num_new_annotations)
         print("-"*20)
-        ###
-        quit()
