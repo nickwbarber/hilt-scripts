@@ -16,20 +16,18 @@ def get_intersecting_sentence(annotation):
 
 def has_nonneutral_sentiment(annotation):
     intersecting_sentence = get_intersecting_sentence(annotation)
-    result = bool(
+    return bool(
         intersecting_sentence.get_intersecting_of_type("nonneutral_sentence")
     )
-    return result
 
 def has_possible_causal_connective(annotation):
     intersecting_sentence = get_intersecting_sentence(annotation)
-    result = any(
+    return any(
         bool(
             sentence.get_intersecting_of_type("possible_causal_connective")
         )
         for sentence in get_near_sentences(intersecting_sentence, distance=3) + [intersecting_sentence]
     )
-    return result
 
 def has_participant_reference(annotation):
     intersecting_sentence = get_intersecting_sentence(annotation)
@@ -40,7 +38,7 @@ def has_participant_reference(annotation):
 
 def is_probable_eau(evita_event):
     try:
-        result = bool(
+        return bool(
             has_participant_reference(evita_event)
             and has_possible_causal_connective(evita_event)
             and has_nonneutral_sentiment(evita_event)
@@ -48,7 +46,6 @@ def is_probable_eau(evita_event):
     except:
         print(evita_event)
         return False
-    return result
 
 def create_heuristic_annotations(annotation_file,
                                  label):
