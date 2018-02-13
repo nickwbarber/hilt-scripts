@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
+import gatenlp
 import hiltnlp
-import pdb
 
 
 eau_heuristic_types = [
@@ -11,24 +11,12 @@ eau_heuristic_types = [
     "possible_causal_connective",
 ]
 
-def get_intersecting_sentence(annotation,
-                              annotation_tree):
-    return next(
-        iter(hiltnlp.get_intersecting_of_type(
-            annotation,
-            "Sentence",
-            annotation_tree=annotation_tree,
-        )),
-        None,
-    )
-
 def has_nonneutral_sentiment(annotation,
                              annotation_tree):
     intersecting_sentence = get_intersecting_sentence(
         annotation,
         annotation_tree=annotation_tree,
     )
-    assert intersecting_sentence
     return any(
         intersecting_annotation.type.lower() == "nonneutral_sentence"
         for intersecting_annotation in annotation_tree.search(intersecting_sentence)
@@ -40,7 +28,6 @@ def has_possible_causal_connective(annotation,
         annotation,
         annotation_tree=annotation_tree,
     )
-    assert intersecting_sentence
     return any(
         any(
             intersecting_annotation.type.lower() == "possible_causal_connective"
@@ -55,24 +42,15 @@ def has_participant_reference(annotation,
         annotation,
         annotation_tree=annotation_tree,
     )
-    assert intersecting_sentence
     return any(
         intersecting_annotation.type.lower() == "participant_reference"
         for intersecting_annotation in annotation_tree.search(intersecting_sentence)
     )
 
-def is_probable_eau(evita_event,
-                    eau_heuristic_tree):
-    intersecting_sentence = next(
-        iter([x for x in hiltnlp.get_intersecting_of_type(evita_event, "Sentence", annotation_tree=eau_heuristic_tree)]),
-        None,
-    )
-    print(type(intersecting_sentence))
-    # intersecting_sentence = get_intersecting_sentence(
-        # evita_event,
-        # annotation_tree=eau_heuristic_tree,
-    # )
-    assert intersecting_sentence
+def is_probable_eau(evita_event):
+    intersecting_sentence = evita_event.get_intersecting_of_type(
+        "Sentence"
+    )[0]
     return bool(
         has_participant_reference(evita_event, annotation_tree=eau_heuristic_tree)
         and has_possible_causal_connective(evita_event, annotation_tree=eau_heuristic_tree)
@@ -81,22 +59,11 @@ def is_probable_eau(evita_event,
 
 def create_heuristic_annotations(annotation_file,
                                  label):
-    eau_heuristic_tree = gatenlp.GateIntervalTree()
-
-    # add sentence annotations to tree
-    for sentence in hiltnlp.get_sentences(annotation_file):
-        eau_heuristic_tree.add(sentence)
-
-    # add heuristic annotations to tree
     eau_heuristic_annotation_set = annotation_file.annotation_sets_dict["EAU_heuristics"]
-    for annotation in eau_heuristic_annotation_set:
-        if annotation.type in eau_heuristic_types:
-            eau_heuristic_tree.add(annotation)
-
-    for annotation in eau_heuristic_tree:
+    for annotation in annotation_file.annotations:
         if annotation.type.lower() == "evita_event":
             evita_event = annotation
-            if is_probable_eau(evita_event, eau_heuristic_tree):
+            if is_probable_eau(evita_event):
                 eau_heuristic_annotation_set.create_annotation(
                     args.label,
                     evita_event.start_node,
@@ -155,7 +122,6 @@ def get_near_sentences(sentence,
 if __name__ == "__main__":
     import os
     import argparse
-    import gatenlp
 
 
     parser = argparse.ArgumentParser(
@@ -194,68 +160,5 @@ if __name__ == "__main__":
                 annotation.delete()
 
         create_heuristic_annotations(annotation_file, label=args.label)
-        # eau_heuristic_annotation_set = annotation_file.annotation_sets_dict["EAU_heuristics"]
-        # sentences = [
-        #     annotation
-        #     for annotation in annotation_file.annotations
-        #     if annotation.type.lower() == "sentence"
-        # ]
-        # gatenlp.dlink(sentences)
-        # eau_heuristic_tree = gatenlp.GateIntervalTree()
-        # for annotation in eau_heuristic_annotation_set:
-        #     if annotation.type in eau_heuristic_types:
-        #         eau_heuristic_tree.add(annotation)
-        # for sentence in sentences:
-        #     eau_heuristic_tree.add(sentence)
-
-        # for annotation in eau_heuristic_tree:
-        #     if annotation.type.lower() == "sentence":
-        #         sentence = annotation
-
-        #         eau_heuristic_annotations = get_eau_heuristics(
-        #             eau_heuristic_tree.search(
-        #                 sentence
-        #             )
-        #         )
-        #         key_heuristic_annotation = next(
-        #             (
-        #                 annotation
-        #                 for annotation in eau_heuristic_annotations
-        #                 if annotation.type == "evita_event"
-        #             ),
-        #             None
-        #         )
-        #         intersecting_heuristic_types = [
-        #             annotation.type
-        #             for annotation in eau_heuristic_annotations
-        #         ]
-        #         intersecting_heuristic_type_set = set(intersecting_heuristic_types)
-        #         if len(intersecting_heuristic_type_set) == len(eau_heuristic_types):
-        #             eau_heuristic_annotation_set.create_annotation(
-        #                 args.label,
-        #                 key_heuristic_annotation.start_node,
-        #                 key_heuristic_annotation.end_node,
-        #             )
-        #             continue
-
-        #         intersecting_heuristic_type_set.add("possible_causal_connective")
-        #         if len(intersecting_heuristic_type_set) == len(eau_heuristic_types):
-        #             near_sentences = get_near_sentences(sentence, distance=3)
-        #             for near_sentence in near_sentences:
-        #                 intersecting_heuristic_types = [
-        #                     annotation.type
-        #                     for annotation in get_eau_heuristics(
-        #                         eau_heuristic_tree.search(
-        #                             near_sentence
-        #                         )
-        #                     )
-        #                 ]
-        #                 if "possible_causal_connective" in intersecting_heuristic_types:
-        #                     eau_heuristic_annotation_set.create_annotation(
-        #                         args.label,
-        #                         key_heuristic_annotation.start_node,
-        #                         key_heuristic_annotation.end_node,
-        #                     )
-        #                     break
 
         annotation_file.save_changes()
