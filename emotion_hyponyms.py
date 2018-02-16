@@ -10,9 +10,12 @@ def hyper(synset):
     return synset.hypernyms()
 
 touchy_feely_synsets = [
-    wn.synset("feeling.n.01"),
-    wn.synset("condition.n.01"),
-    wn.synset("psychological_state.n.01"),
+    wn.synset(name)
+    for name in [
+        "feeling.n.01",
+        "condition.n.01",
+        "psychological_state.n.01",
+    ]
 ]
 
 def is_hyponym_of(synset_a, synset_b):
