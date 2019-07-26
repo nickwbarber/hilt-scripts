@@ -3,7 +3,7 @@
 import os
 import collections
 import re
-import gatenlp
+import gatenlphiltlab
 
 
 # not really necessary yet (or maybe ever)
@@ -93,7 +93,7 @@ def segment_turns(sentences):
     if turn_sentences:
         turns.append(Turn(turn_sentences))
 
-    gatenlp.dlink(turns)
+    gatenlphiltlab.dlink(turns)
 
     # for turn in turns:
         # if not is_complete(turn[-1]):
@@ -147,7 +147,7 @@ if __name__ == "__main__":
     sentence_terminals = set()
     for annotation_file_path in annotation_file_paths:
 
-        annotation_file = gatenlp.AnnotationFile(annotation_file_path)
+        annotation_file = gatenlphiltlab.AnnotationFile(annotation_file_path)
         annotations = annotation_file.annotations
         sentences = (
             annotation
@@ -157,7 +157,7 @@ if __name__ == "__main__":
         sentences = sorted(
             sentences, key=lambda x: x.start_node
         )
-        gatenlp.dlink(sentences)
+        gatenlphiltlab.dlink(sentences)
 
         print(sentences[10])
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import gatenlp
+import gatenlphiltlab
 import hiltnlp
 
 
@@ -115,7 +115,7 @@ if __name__ == "__main__":
                 )
             )
             continue
-        annotation_file = gatenlp.AnnotationFile(annotation_file_path)
+        annotation_file = gatenlphiltlab.AnnotationFile(annotation_file_path)
         print("annotating:", annotation_file.filename)
         num_new_annotations = 0
 
@@ -124,7 +124,7 @@ if __name__ == "__main__":
                 annotation.delete()
 
         sentences = [ x for x in annotation_file.annotations if x.type == "Sentence" ]
-        gatenlp.dlink(sentences)
+        gatenlphiltlab.dlink(sentences)
 
         num_new_annotations += create_heuristic_annotations(
             annotation_file,

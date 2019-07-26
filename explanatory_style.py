@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-import gatenlp
+import gatenlphiltlab
 
 
 # TODO: update to current Annotation class definition
-class Event(gatenlp.Annotation):
+class Event(gatenlphiltlab.Annotation):
     def __init__(self,
                  annotation):
         self.annotation = annotation
@@ -26,7 +26,7 @@ class Event(gatenlp.Annotation):
         else:
             return self._polarity
 
-class Attribution(gatenlp.Annotation):
+class Attribution(gatenlphiltlab.Annotation):
     def __init__(self,
                  annotation):
         self.annotation = annotation
@@ -59,13 +59,13 @@ class EventAttributionUnit:
     def __init__(self,
                  event,
                  attribution):
-        """event, attribution must be gatenlp.Annotation objects
+        """event, attribution must be gatenlphiltlab.Annotation objects
         """
         self._event = Event(event)
         self._attribution = Attribution(attribution)
         for component in [self.event, self.attribution]:
-            if not isinstance(component.annotation, gatenlp.Annotation):
-                raise TypeError("Not a gatenlp.Annotation object!")
+            if not isinstance(component.annotation, gatenlphiltlab.Annotation):
+                raise TypeError("Not a gatenlphiltlab.Annotation object!")
 
     @property
     def event(self):
@@ -167,7 +167,7 @@ if __name__ == "__main__":
         writer.writeheader()
 
         for f in args.annotation_files:
-            annotation_file = gatenlp.AnnotationFile(f)
+            annotation_file = gatenlphiltlab.AnnotationFile(f)
             annotations = annotation_file.iter_annotations()
 
             EAUs = get_event_attribution_units_from_annotations(

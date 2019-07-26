@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
 import itertools
-import gatenlp
+import gatenlphiltlab
 
 
 # annotation_file_path = "/path/to/annotation_file.xml"
 annotation_file_path = "/home/nick/hilt/pes/conversations/16/4-MG-2014-06-02_PES_3_consensus.xml"
 
-annotation_file = gatenlp.AnnotationFile(annotation_file_path)
+annotation_file = gatenlphiltlab.AnnotationFile(annotation_file_path)
 
 # Automatically links any annotation continuations to their continued annotations.
 annotations = annotation_file.annotations
@@ -20,7 +20,7 @@ sentences = [
 ]
 
 # doubly links each annotation
-gatenlp.dlink(sentences)
+gatenlphiltlab.dlink(sentences)
 
 for sentence in sentences[1:5]:
     print(

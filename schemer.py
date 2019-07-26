@@ -3,7 +3,7 @@
 import argparse
 from collections import OrderedDict
 from lxml import etree as ET
-import gatenlp
+import gatenlphiltlab
 
 parser = argparse.ArgumentParser(
     description='pairs IDs with text spans of a specified annotation'
@@ -51,8 +51,8 @@ parser.add_argument(
 
 # parse CL arguments
 args = parser.parse_args()
-annotation_file = gatenlp.AnnotationFile(args.annotation_file)
-schema_file = gatenlp.Schema(args.schema_file)
+annotation_file = gatenlphiltlab.AnnotationFile(args.annotation_file)
+schema_file = gatenlphiltlab.Schema(args.schema_file)
 write_file = args.write_file
 input_annotation_type = args.input_annotation_type
 output_annotation_paths = args.output_annotation_path
@@ -78,7 +78,7 @@ for output_annotation_path in output_annotation_paths:
 
 text_with_nodes = annotation_file._text_with_nodes
 
-annotations = gatenlp.concatenate_annotations(
+annotations = gatenlphiltlab.concatenate_annotations(
     x for x in annotation_file.iter_annotations()
     if x._type.lower() == input_annotation_type.lower()
 )

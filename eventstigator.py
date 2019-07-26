@@ -1,6 +1,6 @@
 import os
 from lxml import etree
-import gatenlp
+import gatenlphiltlab
 
 
 class EvitaFile:
@@ -119,14 +119,14 @@ if __name__ == "__main__":
         print("gate_file_path == {}".format(repr(args.gate_file_path)))
         print("evita_file_path == {}".format(repr(args.evita_file_path)))
 
-    gate_file = gatenlp.AnnotationFile(args.gate_file_path)
+    gate_file = gatenlphiltlab.AnnotationFile(args.gate_file_path)
     evita_file = EvitaFile(args.evita_file_path)
 
     if gate_file.text == evita_file.text:
         is_text_same = True
     else:
         is_text_same = False
-        changes = gatenlp.diff.get_change_tree(
+        changes = gatenlphiltlab.diff.get_change_tree(
             evita_file.text,
             gate_file.text,
         )
@@ -149,8 +149,8 @@ if __name__ == "__main__":
             new_annotations.append(new_annotation)
 
     if not is_text_same:
-        gatenlp.diff.align_annotations(new_annotations, changes)
-        gatenlp.diff.assure_nodes(new_annotations, gate_file)
+        gatenlphiltlab.diff.align_annotations(new_annotations, changes)
+        gatenlphiltlab.diff.assure_nodes(new_annotations, gate_file)
 
     gate_file.save_changes()
 

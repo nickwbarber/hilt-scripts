@@ -3,7 +3,7 @@
 import os
 import itertools
 import argparse
-import gatenlp
+import gatenlphiltlab
 import hiltnlp
 import f_measure as fm
 
@@ -92,7 +92,7 @@ if __name__ == "__main__":
             )
             continue
 
-        annotation_file = gatenlp.AnnotationFile(annotation_file_path)
+        annotation_file = gatenlphiltlab.AnnotationFile(annotation_file_path)
         total_text_length += len(annotation_file.text)
 
         eau_heuristic_annotations = [
@@ -111,11 +111,11 @@ if __name__ == "__main__":
             for annotation in annotation_file.annotations
             if annotation.type.lower() == "sentence"
         ]
-        gatenlp.dlink(sentences)
+        gatenlphiltlab.dlink(sentences)
 
         turns = hiltnlp.get_turns(sentences)
 
-        tree = gatenlp.GateIntervalTree()
+        tree = gatenlphiltlab.GateIntervalTree()
         for annotation in itertools.chain(
             eau_heuristic_annotations,
             consensus_events_set,

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-import gatenlp
+import gatenlphiltlab
 
 
 annotation_file_path = "/home/nick/test/gate/pers_ment/test.xml"
 
-annotation_file = gatenlp.AnnotationFile(annotation_file_path)
+annotation_file = gatenlphiltlab.AnnotationFile(annotation_file_path)
 
 tree = annotation_file.interval_tree
 

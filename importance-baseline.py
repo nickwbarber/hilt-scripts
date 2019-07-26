@@ -6,7 +6,7 @@ import re
 from collections import namedtuple
 import argparse
 import xml.etree.ElementTree as ET
-import gatenlp
+import gatenlphiltlab
 
 # command-line argument parsing
 parser = argparse.ArgumentParser(
@@ -30,8 +30,8 @@ parser.add_argument(
 )
 
 # instantiate input files as appropriate gate objects
-schema_file = gatenlp.Schema(parser.parse_args().schema_file)
-input_file = gatenlp.Annotation(parser.parse_args().input_file)
+schema_file = gatenlphiltlab.Schema(parser.parse_args().schema_file)
+input_file = gatenlphiltlab.Annotation(parser.parse_args().input_file)
 
 output_file = parser.parse_args().output_file
 

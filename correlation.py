@@ -65,7 +65,7 @@ def cronbachs_alpha(annotations):
 def main():
 
     import argparse
-    import gatenlp
+    import gatenlphiltlab
 
 
     parser = argparse.ArgumentParser(
@@ -86,7 +86,7 @@ def main():
     paths = args.annotation_file
 
     annotation_files = (
-        gatenlp.AnnotationFile(path)
+        gatenlphiltlab.AnnotationFile(path)
         for path in paths
     )
 
@@ -94,7 +94,7 @@ def main():
         zip(
             *[
                 sorted(
-                    gatenlp.concatenate_annotations(
+                    gatenlphiltlab.concatenate_annotations(
                         x for x in annotation_file.iter_annotations()
                         if x._type.lower() == "attribution"
                     ),

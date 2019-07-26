@@ -6,7 +6,7 @@ from collections import Counter
 import pandas
 import matplotlib
 import matplotlib.pyplot as plt
-import gatenlp
+import gatenlphiltlab
 import explanatory_style as es
 import turn_parser as tp
 
@@ -173,7 +173,7 @@ for annotation_file_path in annotation_file_paths:
     basename = os.path.basename(annotation_file_path)
     participant_name = "-".join(basename.split("-")[0:2])
 
-    annotation_file = gatenlp.AnnotationFile(annotation_file_path)
+    annotation_file = gatenlphiltlab.AnnotationFile(annotation_file_path)
     annotations = annotation_file.annotations
     annotations = [
         annotation
@@ -196,8 +196,8 @@ for annotation_file_path in annotation_file_paths:
         if annotation.type.lower() == "sentence"
     ]
     turns = tp.segment_turns(sentences)
-    gatenlp.dlink(turns)
-    gatenlp.dlink(sentences)
+    gatenlphiltlab.dlink(turns)
+    gatenlphiltlab.dlink(sentences)
     assert turns[0].start_node == turns[1].previous.start_node
     assert turns[-1].start_node == turns[-2].next.start_node
     # # filter sentences to truly uttered sentences

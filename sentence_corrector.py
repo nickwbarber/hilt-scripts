@@ -2,7 +2,7 @@
 
 import os
 import argparse
-import gatenlp
+import gatenlphiltlab
 
 
 parser = argparse.ArgumentParser(
@@ -20,7 +20,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 for annotation_file_path in args.annotation_files:
-    annotation_file = gatenlp.AnnotationFile(annotation_file_path)
+    annotation_file = gatenlphiltlab.AnnotationFile(annotation_file_path)
     annotations = annotation_file.annotations
     sentences = (
         annotation
@@ -32,7 +32,7 @@ for annotation_file_path in args.annotation_files:
         key=lambda x: x.start_node
     )
 
-    gatenlp.dlink(sentences)
+    gatenlphiltlab.dlink(sentences)
 
     current_sentence = sentences[0]
     while True:
@@ -53,7 +53,7 @@ for annotation_file_path in args.annotation_files:
                     # + len(current_sentence)
                 # )
             current_sentence.delete()
-            # gatenlp.unlink(current_sentence)
+            # gatenlphiltlab.unlink(current_sentence)
 
         current_sentence = current_sentence.next
         if not current_sentence:

@@ -1,4 +1,4 @@
-import gatenlp
+import gatenlphiltlab
 import explanatory_style as es
 import argparse
 import os
@@ -41,7 +41,7 @@ if __name__ == "__main__":
         writer.writeheader()
 
         for annotation_file_path in args.annotation_files:
-            gate_file = gatenlp.AnnotationFile(annotation_file_path)
+            gate_file = gatenlphiltlab.AnnotationFile(annotation_file_path)
             EAU_sets = [
                 annotation_set
                 for annotation_set in gate_file.annotation_sets

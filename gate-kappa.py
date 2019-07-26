@@ -6,7 +6,7 @@ import os
 import sys
 import re
 import argparse
-import gatenlp
+import gatenlphiltlab
 
 
 # parses command line arguments
@@ -80,14 +80,14 @@ parser.add_argument(
 args = parser.parse_args()
 
 csv_output_mode = args.csv_output_mode
-source1 = gatenlp.Annotation(args.source1)
-source2 = gatenlp.Annotation(args.source2)
-schema = gatenlp.Schema(args.schema)
+source1 = gatenlphiltlab.Annotation(args.source1)
+source2 = gatenlphiltlab.Annotation(args.source2)
+schema = gatenlphiltlab.Schema(args.schema)
 weighting = args.weighting
 if weighting.lower() == 'none':
     weighting = None
 
-test = gatenlp.pair_annotations(
+test = gatenlphiltlab.pair_annotations(
     source1.get_annotations(
         annotation_type=args.annotation_type,
         annotation_set=args.annotation_set
@@ -105,7 +105,7 @@ for x in test:
     # don't use weighting for categorical values like polarity
     # if no weighting, assign unique numbers for each annotation feature value
 
-    kappa = gatenlp.kappa(x, weights=weighting)
+    kappa = gatenlphiltlab.kappa(x, weights=weighting)
 
     if csv_output_mode:
         print(

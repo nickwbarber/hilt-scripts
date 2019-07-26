@@ -4,7 +4,7 @@ from os.path import abspath
 from os.path import splitext
 from os.path import isfile
 import argparse
-import gatenlp
+import gatenlphiltlab
 import Levenshtein
 
 
@@ -54,9 +54,9 @@ if __name__ == "__main__":
         " run")
     args = parser.parse_args()
 
-    regexes = gatenlp.regex_patterns.regexes
+    regexes = gatenlphiltlab.regex_patterns.regexes
 
-    annotation_file = gatenlp.AnnotationFile(args.input_file)
+    annotation_file = gatenlphiltlab.AnnotationFile(args.input_file)
     if args.regex_restrictions:
         regex_restrictions = [
             regex.name
@@ -116,7 +116,7 @@ if __name__ == "__main__":
         regex_restrictions = False
 
     if args.clean:
-        text = gatenlp.normalize(
+        text = gatenlphiltlab.normalize(
             annotation_file.text,
             regex_restrictions=regex_restrictions,
             verbose=args.verbose,

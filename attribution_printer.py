@@ -1,6 +1,6 @@
 import os
 from itertools import chain
-import gatenlp
+import gatenlphiltlab
 import explanatory_style as es
 
 def get_sentence(key_annotation):
@@ -118,7 +118,7 @@ for annotation_file_path in annotation_file_paths:
 
     basename = os.path.basename(annotation_file_path)
 
-    annotation_file = gatenlp.AnnotationFile(annotation_file_path)
+    annotation_file = gatenlphiltlab.AnnotationFile(annotation_file_path)
     annotations = annotation_file.annotations
     annotations = [
         annotation
@@ -140,7 +140,7 @@ for annotation_file_path in annotation_file_paths:
         for annotation in annotations
         if annotation.type.lower() == "sentence"
     ]
-    gatenlp.dlink(sorted(sentences, key=lambda x: x.start_node))
+    gatenlphiltlab.dlink(sorted(sentences, key=lambda x: x.start_node))
     events = [
         es.Event(annotation)
         for annotation in annotations

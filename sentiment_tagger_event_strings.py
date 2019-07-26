@@ -5,7 +5,7 @@ import os
 from collections import namedtuple
 from collections import Counter
 import json
-import gatenlp
+import gatenlphiltlab
 import explanatory_style as es
 import textractor
 from pycorenlp import StanfordCoreNLP
@@ -35,7 +35,7 @@ string_sentiments = Counter()
 string_sentiment_values = Counter()
 event_sentiments_and_polarities = Counter()
 for gate_file_path in gate_file_paths:
-    gate_file = gatenlp.AnnotationFile(gate_file_path)
+    gate_file = gatenlphiltlab.AnnotationFile(gate_file_path)
 
 
     # events

@@ -13,7 +13,7 @@ media_file_extensions = [
 if __name__ == "__main__":
     import os
     import argparse
-    import gatenlp
+    import gatenlphiltlab
 
 
     parser = argparse.ArgumentParser(
@@ -39,7 +39,7 @@ if __name__ == "__main__":
             )
             continue
 
-        annotation_file = gatenlp.AnnotationFile(annotation_file_path)
+        annotation_file = gatenlphiltlab.AnnotationFile(annotation_file_path)
 
         sentences = (
             annotation

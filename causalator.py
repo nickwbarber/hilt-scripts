@@ -4,7 +4,7 @@ import os
 from itertools import chain
 from collections import Counter
 import argparse
-import gatenlp
+import gatenlphiltlab
 
 
 relators = [
@@ -83,7 +83,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 for annotation_file_path in args.annotation_files:
-    annotation_file = gatenlp.AnnotationFile(annotation_file_path)
+    annotation_file = gatenlphiltlab.AnnotationFile(annotation_file_path)
     EAU_heuristics_set = annotation_file.create_annotation_set("EAU_heuristics")
     tokens = [
         annotation

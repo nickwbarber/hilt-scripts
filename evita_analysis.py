@@ -1,6 +1,6 @@
 import os
 from pprint import PrettyPrinter
-import gatenlp
+import gatenlphiltlab
 
 conversations_dirs = [
     "/home/nick/hilt/pes/consensus_files_with_tags",
@@ -24,7 +24,7 @@ for conversations_dir in conversations_dirs:
     num_sentences_with_events = 0
     for gate_file_path in gate_file_paths:
 
-        gate_file = gatenlp.AnnotationFile(gate_file_path)
+        gate_file = gatenlphiltlab.AnnotationFile(gate_file_path)
 
         try:
             evita_set = gate_file.annotation_sets_dict["Evita"]
@@ -37,7 +37,7 @@ for conversations_dir in conversations_dirs:
             num_human_events += 1
             local_num_human_events += 1
             for evita_event in evita_set:
-                overlapping = gatenlp.is_overlapping(
+                overlapping = gatenlphiltlab.is_overlapping(
                     [
                         human_event,
                         evita_event,
@@ -60,7 +60,7 @@ for conversations_dir in conversations_dirs:
         num_sentences += len(sentences)
         for sentence in sentences:
             for evita_event in evita_set:
-                overlapping = gatenlp.is_overlapping(
+                overlapping = gatenlphiltlab.is_overlapping(
                     [
                         sentence,
                         evita_event,

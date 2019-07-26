@@ -2,7 +2,7 @@
 
 import os
 import argparse
-import gatenlp
+import gatenlphiltlab
 import hiltnlp
 from pycorenlp import StanfordCoreNLP
 
@@ -12,7 +12,7 @@ def get_sentiment(annotation,
                   verbose=False,
                   normalize=True):
     if normalize:
-        annotation_text = gatenlp.normalize(annotation.text)
+        annotation_text = gatenlphiltlab.normalize(annotation.text)
     else:
         annotation_text = annotation.text
     if annotation_text == "":
@@ -55,7 +55,7 @@ if __name__ == "__main__":
 
     for annotation_file_path in args.annotation_files:
 
-        gate_file = gatenlp.AnnotationFile(annotation_file_path)
+        gate_file = gatenlphiltlab.AnnotationFile(annotation_file_path)
         sentences = [
             annotation
             for annotation in gate_file.annotations

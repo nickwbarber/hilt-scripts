@@ -1,7 +1,7 @@
 import itertools
 import os
 from lxml import etree as ET
-import gatenlp
+import gatenlphiltlab
 
 
 conversations_path = "/home/nick/hilt/pes/conversations"
@@ -23,9 +23,9 @@ annotation_files = list(
 )
 
 for f in annotation_files:
-    annotation_file = gatenlp.AnnotationFile(f)
+    annotation_file = gatenlphiltlab.AnnotationFile(f)
     changes = False
-    for annotation in gatenlp.filter_annotations_by_type(
+    for annotation in gatenlphiltlab.filter_annotations_by_type(
         annotation_file.iter_annotations(),
         "attribution",
         with_continuations=True,

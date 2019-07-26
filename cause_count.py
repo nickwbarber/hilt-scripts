@@ -5,7 +5,7 @@ from itertools import chain
 from collections import Counter
 import intervaltree
 import pandas
-import gatenlp
+import gatenlphiltlab
 
 
 relators = [
@@ -87,7 +87,7 @@ for annotation_file_path in annotation_file_paths:
     basename = os.path.basename(annotation_file_path)
     participant_name = "-".join(basename.split("-")[0:2])
 
-    annotation_file = gatenlp.AnnotationFile(annotation_file_path)
+    annotation_file = gatenlphiltlab.AnnotationFile(annotation_file_path)
     annotations = annotation_file.annotations
     annotations = [
         annotation

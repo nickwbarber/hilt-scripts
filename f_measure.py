@@ -109,7 +109,7 @@ def main():
     from itertools import product
     import csv
     import argparse
-    import gatenlp
+    import gatenlphiltlab
 
     class InputError(Exception):
         pass
@@ -224,9 +224,9 @@ def main():
 
         annotations = []
         for input_file in input_files:
-            annotation_file = gatenlp.AnnotationFile(input_file)
+            annotation_file = gatenlphiltlab.AnnotationFile(input_file)
             annotations.append(
-                gatenlp.concatenate_annotations(
+                gatenlphiltlab.concatenate_annotations(
                     x for x in annotation_file.iter_annotations()
                     if (x._type.lower() == annotation_type.lower())
                     or (x._type.lower() == "event")
