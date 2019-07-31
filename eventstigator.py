@@ -88,8 +88,9 @@ if __name__ == "__main__":
 
 
     parser = argparse.ArgumentParser(
-        description="Writes the plain text used within "
-        "a GATE document to a file"
+        description="Given a GATE annotation file and an EVITA annotation file"
+        "(using the same text), import EVITA annotations into the GATE"
+        "annotation file."
     )
     parser.add_argument(
         "-g",
