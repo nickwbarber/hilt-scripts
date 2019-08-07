@@ -127,7 +127,7 @@ if __name__ == "__main__":
         is_text_same = True
     else:
         is_text_same = False
-        changes = gatenlphiltlab.diff.get_change_tree(
+        changes = gatenlphiltlab.diff.ChangeTree(
             evita_file.text,
             gate_file.text,
         )
